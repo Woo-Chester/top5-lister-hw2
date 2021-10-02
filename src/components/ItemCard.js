@@ -5,28 +5,17 @@ export default class ItemCard extends React.Component {
         super(props);
 
         this.state = {
-            text: this.props.keyNamePair.name,
+            text: this.props.currentItem,
             editActive: false,
         }
     }
     handleClick = (event) => {
         if (event.detail === 1) {
-            this.handleLoadList(event);
+            ;
         }
         else if (event.detail === 2) {
             this.handleToggleEdit(event);
         }
-    }
-    handleLoadList = (event) => {
-        let listKey = event.target.id;
-        if (listKey.startsWith("list-card-text-")) {
-            listKey = listKey.substring("list-card-text-".length);
-        }
-        this.props.loadListCallback(listKey);
-    }
-    handleDeleteList = (event) => {
-        event.stopPropagation();
-        this.props.deleteListCallback(this.props.keyNamePair);
     }
     handleToggleEdit = (event) => {
         this.setState({
@@ -42,19 +31,29 @@ export default class ItemCard extends React.Component {
         }
     }
     handleBlur = () => {
-        let key = this.props.keyNamePair.key;
+        //let key = this.props.keyNamePair.key;
         let textValue = this.state.text;
         console.log("ListCard handleBlur: " + textValue);
-        this.props.renameListCallback(key, textValue);
+        this.props.renameItemCallback(this.props.currentKey, this.props.currentIndex, textValue);
         this.handleToggleEdit();
     }
 
     render() {
-        const { keyNamePair, selected } = this.props;
+        const { selected, currentKey } = this.props;
         const { currentItem } = this.props;
         const { currentIndex } = this.props;
         if (this.state.editActive) {
-
+            return (
+                <input 
+                    id={"item-text-input-" + currentIndex}
+                    className='list-card'
+                    type='text'
+                    onKeyPress={this.handleKeyPress}
+                    onBlur={this.handleBlur}
+                    onChange={this.handleUpdate}
+                    defaultValue={currentItem}
+                />
+            )
         }
         else{
             let selectClass = "unselected-item-card";
@@ -64,7 +63,7 @@ export default class ItemCard extends React.Component {
             return (
                 <div
                     id={'item-card-' + currentIndex}
-                    key={keyNamePair.key}
+                    key={currentKey}
                     onClick={this.handleClick}
                     className={'top5-item ' + selectClass}>
                     {currentItem}

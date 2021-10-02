@@ -71,6 +71,30 @@ class App extends React.Component {
             this.db.mutationCreateList(newList);
         });
     }
+    renameItem = (key, index, newName) => {
+        let newKeyNamePairs = [...this.state.sessionData.keyNamePairs];
+        let currentList = this.state.currentList;
+        if(currentList.key === key){
+            currentList.items[index] = newName;
+        }
+        this.setState(prevState => ({
+            currentList: prevState.currentList,
+            sessionData: {
+                nextKey: prevState.sessionData.nextKey,
+                counter: prevState.sessionData.counter,
+                keyNamePairs: newKeyNamePairs
+
+            }
+        }), () => {
+            // AN AFTER EFFECT IS THAT WE NEED TO MAKE SURE
+            // THE TRANSACTION STACK IS CLEARED
+            let list = this.db.queryGetList(key);
+            list.items[index] = newName;
+            this.db.mutationUpdateList(list);
+            this.db.mutationUpdateSessionData(this.state.sessionData);
+        });
+    }
+
     renameList = (key, newName) => {
         let newKeyNamePairs = [...this.state.sessionData.keyNamePairs];
         // NOW GO THROUGH THE ARRAY AND FIND THE ONE TO RENAME
@@ -160,6 +184,7 @@ class App extends React.Component {
                 <Workspace
                     currentList={this.state.currentList} 
                     keyNamePairs={this.state.sessionData.keyNamePairs}
+                    renameItemCallback={this.renameItem}
                 />
                 <Statusbar 
                     currentList={this.state.currentList} />
