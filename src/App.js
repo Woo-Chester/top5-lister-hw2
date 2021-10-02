@@ -137,6 +137,9 @@ class App extends React.Component {
             sessionData: prevState.sessionData
         }), () => {
             // ANY AFTER EFFECTS?
+            this.setState({
+                currentList: newCurrentList
+            })
         });
     }
     // THIS FUNCTION BEGINS THE PROCESS OF CLOSING THE CURRENT LIST
@@ -167,6 +170,29 @@ class App extends React.Component {
         let modal = document.getElementById("delete-modal");
         modal.classList.remove("is-visible");
     }
+    confirmDeleteListModal = () => {
+        let newKeyNamePairs = [...this.state.sessionData.keyNamePairs];
+        let currentKey = this.state.currentList.key;
+        // NOW GO THROUGH THE ARRAY AND FIND THE ONE TO RENAME
+        for (let i = 0; i < newKeyNamePairs.length; i++) {
+            let pair = newKeyNamePairs[i];
+            if (pair.key === currentKey) {
+                delete newKeyNamePairs[i];
+            }
+        }
+        this.setState(prevState => ({
+            sessionData: {
+                nextKey: prevState.sessionData.nextKey - 1,
+                counter: prevState.sessionData.counter - 1,
+                keyNamePairs: newKeyNamePairs
+            }
+        }), () => {
+            // PUTTING THIS NEW LIST IN PERMANENT STORAGE
+            // IS AN AFTER EFFECT
+            this.db.mutationCreateList(newKeyNamePairs);
+        });
+        this.hideDeleteListModal();
+    }
     render() {
         return (
             <div id="app-root">
@@ -191,6 +217,8 @@ class App extends React.Component {
                     currentList={this.state.currentList} />
                 <DeleteModal
                     hideDeleteListModalCallback={this.hideDeleteListModal}
+                    confirmDeleteListModalCallback={this.confirmDeleteListModal}
+                    listKeyPair={this.state.currentList}
                 />
             </div>
         );
