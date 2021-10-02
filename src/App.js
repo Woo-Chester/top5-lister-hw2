@@ -72,6 +72,7 @@ class App extends React.Component {
         });
     }
     renameItem = (key, index, newName) => {
+
         let newKeyNamePairs = [...this.state.sessionData.keyNamePairs];
         let currentList = this.state.currentList;
         if(currentList.key === key){

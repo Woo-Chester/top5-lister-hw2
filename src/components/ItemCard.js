@@ -14,7 +14,12 @@ export default class ItemCard extends React.Component {
             ;
         }
         else if (event.detail === 2) {
-            this.handleToggleEdit(event);
+            this.setState({
+                text: this.props.currentItem
+            })
+            if(this.props.currentItem !== null){
+                this.handleToggleEdit(event); 
+            }
         }
     }
     handleToggleEdit = (event) => {
@@ -28,6 +33,7 @@ export default class ItemCard extends React.Component {
     handleKeyPress = (event) => {
         if (event.code === "Enter") {
             this.handleBlur();
+            this.handleToggleEdit();
         }
     }
     handleBlur = () => {
@@ -39,77 +45,32 @@ export default class ItemCard extends React.Component {
     }
 
     render() {
-        const { selected, currentKey } = this.props;
         const { currentItem } = this.props;
         const { currentIndex } = this.props;
         if (this.state.editActive) {
             return (
                 <input 
+                    autoFocus
                     id={"item-text-input-" + currentIndex}
                     className='list-card'
                     type='text'
                     onKeyPress={this.handleKeyPress}
                     onBlur={this.handleBlur}
                     onChange={this.handleUpdate}
-                    defaultValue={currentItem}
+                    defaultValue={currentItem === null ? "" : currentItem}
                 />
             )
         }
         else{
-            let selectClass = "unselected-item-card";
-            if(selected) {
-                selectClass = "selected-item-card";
-            }
             return (
                 <div
                     id={'item-card-' + currentIndex}
-                    key={currentKey}
+                    key={currentIndex}
                     onClick={this.handleClick}
-                    className={'top5-item ' + selectClass}>
-                    {currentItem}
+                    className={'top5-item'}>
+                    {currentItem===null ? "" : currentItem}
                 </div>
             )
         }
-        /*
-        if (this.state.editActive) {
-            return (
-                <input
-                    id={"list-" + keyNamePair.name}
-                    className='list-card'
-                    type='text'
-                    onKeyPress={this.handleKeyPress}
-                    onBlur={this.handleBlur}
-                    onChange={this.handleUpdate}
-                    defaultValue={keyNamePair.name}
-                />)
-        }
-        else {
-
-            let selectClass = "unselected-list-card";
-            if (selected) {
-                selectClass = "selected-list-card";
-            }
-            return (
-                <div
-                    id={keyNamePair.key}
-                    key={keyNamePair.key}
-                    onClick={this.handleClick}
-                    className={'list-card ' + selectClass}>
-                    <span
-                        id={"list-card-text-" + keyNamePair.key}
-                        key={keyNamePair.key}
-                        className="list-card-text">
-                        {keyNamePair.name}
-                    </span>
-                    <input
-                        type="button"
-                        id={"delete-list-" + keyNamePair.key}
-                        className="list-card-button"
-                        onClick={this.handleDeleteList}
-                        value={"\u2715"} />
-                </div>
-            );
-        }
-        */
     }
 }

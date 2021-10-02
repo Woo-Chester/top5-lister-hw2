@@ -18,9 +18,9 @@ export default class Workspace extends React.Component {
                     {
                         Array.from(Array(5).keys()).map((index) => (
                             <ItemCard
-                                currentItem={currentList!=null ? currentList.items[index] : ""}
+                                currentItem={currentList!=null ? currentList.items[index] : null}
                                 keyNamePair={keyNamePairs}
-                                currentKey={currentList!=null ? currentList.key : ""}
+                                currentKey={currentList!=null ? currentList.key : null}
                                 currentIndex={index}
                                 renameItemCallback={renameItemCallback}
                             />
