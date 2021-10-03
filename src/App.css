@@ -213,6 +213,13 @@ input {
   font-size:20pt;
 }
 
+.list-card-button{
+  cursor: pointer;
+}
+.list-card-button:disabled{
+  cursor: not-allowed;
+}
+
 .top5-item, .top5-item-dragged-to {
   text-align: left;
   width:95%;

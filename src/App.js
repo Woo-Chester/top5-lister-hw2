@@ -69,6 +69,11 @@ class App extends React.Component {
             // PUTTING THIS NEW LIST IN PERMANENT STORAGE
             // IS AN AFTER EFFECT
             this.db.mutationCreateList(newList);
+            this.db.mutationUpdateSessionData(this.state.sessionData);
+            this.setState({
+                currentList: newList,
+                keyNamePairs: updatedPairs
+            })
         });
     }
     renameItem = (key, index, newName) => {
@@ -150,6 +155,9 @@ class App extends React.Component {
             sessionData: this.state.sessionData
         }), () => {
             // ANY AFTER EFFECTS?
+            this.setState({
+                currentList: null
+            })
         });
     }
     deleteList = () => {
@@ -177,19 +185,23 @@ class App extends React.Component {
         for (let i = 0; i < newKeyNamePairs.length; i++) {
             let pair = newKeyNamePairs[i];
             if (pair.key === currentKey) {
-                delete newKeyNamePairs[i];
+                newKeyNamePairs.splice(i,1);
             }
         }
         this.setState(prevState => ({
             sessionData: {
-                nextKey: prevState.sessionData.nextKey - 1,
+                nextKey: prevState.sessionData.nextKey + 1,
                 counter: prevState.sessionData.counter - 1,
                 keyNamePairs: newKeyNamePairs
             }
         }), () => {
             // PUTTING THIS NEW LIST IN PERMANENT STORAGE
             // IS AN AFTER EFFECT
-            this.db.mutationCreateList(newKeyNamePairs);
+            this.db.mutationUpdateSessionData(this.state.sessionData);
+            this.setState({
+                currentList: null,
+                keyNamePairs: newKeyNamePairs
+            })
         });
         this.hideDeleteListModal();
     }
@@ -198,7 +210,9 @@ class App extends React.Component {
             <div id="app-root">
                 <Banner 
                     title='Top 5 Lister'
-                    closeCallback={this.closeCurrentList} />
+                    closeCallback={this.closeCurrentList} 
+                    currentList={this.state.currentList}
+                />
                 <Sidebar
                     heading='Your Lists'
                     currentList={this.state.currentList}
