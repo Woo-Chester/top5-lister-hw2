@@ -43,10 +43,34 @@ export default class ItemCard extends React.Component {
         this.props.renameItemCallback(this.props.currentKey, this.props.currentIndex, textValue);
         this.handleToggleEdit();
     }
+    handleDragEnter = (event) => {
+        event.target.className = 'top5-item-dragged-to';
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    handleDragLeave = (event) => {
+        event.target.className = 'top5-item';
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    handleDragOver = (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+    handleDrop = (event) => {
+        event.target.className = 'top5-item';
+        this.props.swapItemCallback(event.target.id);
+        //this.props.swapItemCallback(this.dragging, event.target.id);
+        //event.target.className = 'top5-item';
+        //this.dragging = null;
+    }
+    handleDrag = (event) => {
+        event.target.className = 'top5-item current-drag';
+        //event.dataTransfer.setData("id", event.target.id);
+    }
 
     render() {
-        const { currentItem } = this.props;
-        const { currentIndex } = this.props;
+        const { currentItem, currentIndex} = this.props;
         if (this.state.editActive) {
             return (
                 <input 
@@ -67,7 +91,14 @@ export default class ItemCard extends React.Component {
                     id={'item-card-' + currentIndex}
                     key={currentIndex}
                     onClick={this.handleClick}
-                    className={'top5-item'}>
+                    className={'top5-item'}
+                    draggable={currentItem === null ? false : true}
+                    onDragEnter={this.handleDragEnter}
+                    onDragLeave={this.handleDragLeave}
+                    onDragOver={this.handleDragOver}
+                    onDrop={this.handleDrop}
+                    onDrag={this.handleDrag}
+                    >
                     {currentItem===null ? "" : currentItem}
                 </div>
             )

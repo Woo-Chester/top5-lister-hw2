@@ -76,6 +76,27 @@ class App extends React.Component {
             })
         });
     }
+    swapItem = (drop_id) => {
+        //let listItems = this.state.currentList.items;
+        let cList = this.state.currentList;
+        let drag_element = document.getElementsByClassName("current-drag")[0];
+        if(drag_element !== undefined){
+            let drag_id = drag_element.id;
+            let drag_index = drag_id[drag_id.length-1];
+            let drop_index = drop_id[drop_id.length-1];
+
+            let drag_value = cList.items[drag_index];
+            cList.items.splice(drag_index, 1);
+            cList.items.splice(drop_index, 0, drag_value);
+
+            drag_element.classList.remove("current-drag");
+            this.db.mutationUpdateList(cList);
+            this.db.mutationUpdateSessionData(this.state.sessionData);
+            this.setState({
+                currentList: cList
+            })
+        }
+    }
     renameItem = (key, index, newName) => {
 
         let newKeyNamePairs = [...this.state.sessionData.keyNamePairs];
@@ -226,6 +247,7 @@ class App extends React.Component {
                     currentList={this.state.currentList} 
                     keyNamePairs={this.state.sessionData.keyNamePairs}
                     renameItemCallback={this.renameItem}
+                    swapItemCallback={this.swapItem}
                 />
                 <Statusbar 
                     currentList={this.state.currentList} />
